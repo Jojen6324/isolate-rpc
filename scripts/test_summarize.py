@@ -10,6 +10,15 @@ class ReportSemanticsTest(unittest.TestCase):
         self.assertEqual(99,percentile(list(range(1,101)),.99))
         self.assertIsNone(percentile([],.95))
 
+    def test_jmh_sample_histogram_does_not_require_throughput_raw_data(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            directory=Path(temporary);fork=directory/'fork-1';fork.mkdir()
+            (fork/'jmh.json').write_text(json.dumps([{'mode':'sample','threads':16,'params':{'payload':'128'},'primaryMetric':{'score':1,'scoreUnit':'ms/op','rawDataHistogram':[[[[1,3]]]],'scorePercentiles':{'95.0':2}}}]))
+            result=summarize_run(directory,{'status':'passed','parameters':{'kind':'jmh','mode':'shared'}})
+            self.assertEqual({'95.0':2},result['measurements'][0]['percentiles'])
+            self.assertIsNone(result['measurements'][0]['raw_data'])
+            self.assertEqual([[[[1,3]]]],result['measurements'][0]['raw_data_histogram'])
+
     def test_late_completion_throughput_differs_from_phase_cohort_success(self):
         with tempfile.TemporaryDirectory() as temporary:
             directory=Path(temporary)

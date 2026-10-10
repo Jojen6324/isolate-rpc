@@ -10,19 +10,20 @@ parser=argparse.ArgumentParser()
 parser.add_argument('--output',type=Path,default=Path('results/fault-results.json'))
 parser.add_argument('--repeat',type=int,default=3)
 args=parser.parse_args()
+if args.repeat<1:parser.error('repeat must be positive')
 import subprocess,time
 reports=[]
 root=Path(__file__).resolve().parents[1]
 for run in range(args.repeat):
     before=time.time()
-    process=subprocess.run([str(root/'scripts/mvn.sh'),'-pl','rpc-framework-simple','-am','-Dtest=RequestLifecycleTest,ServerResponseTest,ServiceIsolationTest','-Dsurefire.failIfNoSpecifiedTests=false','test'],cwd=root,capture_output=True,text=True)
+    process=subprocess.run([str(root/'scripts/mvn.sh'),'-pl','rpc-framework-simple,rpc-benchmark-client','-am','-Dtest=RequestLifecycleTest,ServerResponseTest,ServiceIsolationTest,DefaultDiscoveryShutdownTest,GuideRpcAdapterTest','-Dsurefire.failIfNoSpecifiedTests=false','test'],cwd=root,capture_output=True,text=True)
     directory=args.output.parent/f'fault-run-{run+1}'
     directory.mkdir(parents=True,exist_ok=True)
     (directory/'test.log').write_text(process.stdout+process.stderr)
     cases=[]
-    for file in sorted((root/'rpc-framework-simple/target/surefire-reports').glob('TEST-*.xml')):
+    for file in sorted(list((root/'rpc-framework-simple/target/surefire-reports').glob('TEST-*.xml'))+list((root/'rpc-benchmark-client/target/surefire-reports').glob('TEST-*.xml'))):
         if file.stat().st_mtime < before:continue
-        if not any(name in file.name for name in ['RequestLifecycleTest','ServerResponseTest','ServiceIsolationTest']):continue
+        if not any(name in file.name for name in ['RequestLifecycleTest','ServerResponseTest','ServiceIsolationTest','DefaultDiscoveryShutdownTest','GuideRpcAdapterTest']):continue
         copied=directory/file.name;copied.write_bytes(file.read_bytes())
         for case in ET.parse(file).getroot().findall('testcase'):
             status='failed' if case.find('failure') is not None or case.find('error') is not None else 'skipped' if case.find('skipped') is not None else 'passed'

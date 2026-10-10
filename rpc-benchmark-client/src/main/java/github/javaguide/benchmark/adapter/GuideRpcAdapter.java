@@ -21,11 +21,14 @@ public final class GuideRpcAdapter implements RpcBenchmarkAdapter {
     }
     @Override public CompletableFuture<EchoResponse> invokeAsync(String group,EchoRequest request){
         NettyRpcClient client=clients[Math.floorMod(next.getAndIncrement(),clients.length)];
-        return client.sendRpcRequestAsync(rpcRequest(group,request),timeout).thenApply(response->{
+        CompletableFuture<RpcResponse<Object>> transport=client.sendRpcRequestAsync(rpcRequest(group,request),timeout);
+        CompletableFuture<EchoResponse> mapped=transport.thenApply(response->{
             EchoResponse echo=(EchoResponse)response.getData();
             if(echo==null||!request.id.equals(echo.id)||!Arrays.equals(request.payload,echo.payload))throw new IllegalStateException("Response content mismatch");
             return echo;
         });
+        mapped.whenComplete((r,error)->{if(mapped.isCancelled())transport.cancel(false);});
+        return mapped;
     }
     @Override public EchoResponse invoke(String group,EchoRequest request){return invokeAsync(group,request).join();}
     @Override public int pendingCount(){int count=0;for(NettyRpcClient c:clients)if(c!=null)count+=c.pendingCount();return count;}

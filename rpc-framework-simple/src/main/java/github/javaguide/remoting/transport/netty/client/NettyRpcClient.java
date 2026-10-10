@@ -52,13 +52,14 @@ public final class NettyRpcClient implements RpcRequestTransport, AutoCloseable 
         return sendRpcRequestAsync(request, 3000);
     }
     public CompletableFuture<RpcResponse<Object>> sendRpcRequestAsync(RpcRequest request, long timeoutMillis) {
+        long started = System.nanoTime();
         if (timeoutMillis <= 0) throw new IllegalArgumentException("timeoutMillis must be positive");
         String id = request.getRequestId();
         CompletableFuture<RpcResponse<Object>> result = requests.register(id);
         if (result.isDone()) return result;
         try {
             requests.attachTimer(id, timer.schedule(() -> requests.fail(id,
-                new RpcCallException(TIMEOUT, "Request deadline exceeded: " + id)), timeoutMillis, TimeUnit.MILLISECONDS));
+                new RpcCallException(TIMEOUT, "Request deadline exceeded: " + id)), remainingNanos(started, timeoutMillis), TimeUnit.NANOSECONDS));
             Future<?> task = preparation.submit(() -> {
                 if (!requests.contains(id)) return;
                 try {
@@ -66,7 +67,7 @@ public final class NettyRpcClient implements RpcRequestTransport, AutoCloseable 
                     if (!requests.contains(id)) return;
                     connectAsync(address).whenComplete((channel, error) -> {
                         if (error != null) { requests.fail(id, new RpcCallException(TRANSPORT, "Connect failed", error)); return; }
-                        dispatch(request, channel);
+                        dispatch(request, channel, started, timeoutMillis);
                     });
                 } catch (RuntimeException e) { requests.fail(id, new RpcCallException(TRANSPORT, "Discovery failed", e)); }
             });
@@ -77,18 +78,25 @@ public final class NettyRpcClient implements RpcRequestTransport, AutoCloseable 
     }
     /** Explicit channel path, also useful for independently managed connections. */
     public CompletableFuture<RpcResponse<Object>> sendRpcRequestAsync(RpcRequest request, long timeoutMillis, Channel channel) {
+        long started = System.nanoTime();
         if (timeoutMillis <= 0) throw new IllegalArgumentException("timeoutMillis must be positive");
         String id = request.getRequestId();
         CompletableFuture<RpcResponse<Object>> f = requests.register(id);
         if (f.isDone()) return f;
         try {
-            requests.attachTimer(id, timer.schedule(() -> requests.fail(id, new RpcCallException(TIMEOUT, "Request deadline exceeded")), timeoutMillis, TimeUnit.MILLISECONDS));
-            dispatch(request, channel);
+            requests.attachTimer(id, timer.schedule(() -> requests.fail(id, new RpcCallException(TIMEOUT, "Request deadline exceeded")), remainingNanos(started, timeoutMillis), TimeUnit.NANOSECONDS));
+            dispatch(request, channel, started, timeoutMillis);
         } catch (RejectedExecutionException e) { requests.fail(id, new RpcCallException(CLOSED, "Client closed", e)); }
         return f;
     }
-    private void dispatch(RpcRequest request, Channel channel) {
+    private static long remainingNanos(long started, long timeoutMillis) {
+        return Math.max(0, TimeUnit.MILLISECONDS.toNanos(timeoutMillis) - (System.nanoTime() - started));
+    }
+    private void dispatch(RpcRequest request, Channel channel, long started, long timeoutMillis) {
         String id = request.getRequestId();
+        if (remainingNanos(started, timeoutMillis) == 0) {
+            requests.fail(id, new RpcCallException(TIMEOUT, "Request deadline exceeded before write")); return;
+        }
         if (!requests.bind(id, channel)) return;
         // Check again immediately before submission; cancellation is local and cannot retract an already queued write.
         if (!requests.contains(id)) return;

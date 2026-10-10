@@ -27,7 +27,7 @@ public final class ScenarioRunner {
         double fastRate=number(options,"--fast-rate",100),slowRate=number(options,"--slow-rate",120),healthySlowRate=number(options,"--healthy-slow-rate",20);
         if(!Double.isFinite(fastRate)||!Double.isFinite(slowRate)||!Double.isFinite(healthySlowRate)||fastRate<=0||slowRate<0||healthySlowRate<0)throw new IllegalArgumentException("Invalid rates");
         long timeout=integer(options,"--timeout",3000);boolean swap=Boolean.parseBoolean(options.getOrDefault("--swap-roles","false"));
-        ArrayBlockingQueue<Row> rows=new ArrayBlockingQueue<>(65536);AtomicBoolean writingDone=new AtomicBoolean();AtomicLong dropped=new AtomicLong();
+        ArrayBlockingQueue<Row> rows=new ArrayBlockingQueue<>(65536);AtomicBoolean writingDone=new AtomicBoolean();AtomicLong dropped=new AtomicLong(),correctnessErrors=new AtomicLong();
         AtomicReference<Throwable> writerError=new AtomicReference<>();
         Thread writer=new Thread(()->{try(PrintWriter out=new PrintWriter(Files.newBufferedWriter(Paths.get(output,"scenario.csv")))){
             out.println("service,phase,request_id,planned_ns,actual_ns,completed_ns,status,latency_ns,scheduling_ns,inflight,pending");
@@ -77,11 +77,11 @@ public final class ScenarioRunner {
                                 row.inflight=inflight.incrementAndGet();row.actual=System.nanoTime()-start;
                                 try {
                                     adapter.invokeAsync(group,new EchoRequest(row.id,bytes)).whenComplete((response,error)->{
-                                        row.completed=System.nanoTime()-start;row.latency=row.completed-row.actual;row.status=FaultController.classify(error);
+                                        row.completed=System.nanoTime()-start;row.latency=row.completed-row.actual;row.status=FaultController.classify(error);if(row.status.equals("correctness_error"))correctnessErrors.incrementAndGet();
                                         row.pending=adapter.pendingCount();inflight.decrementAndGet();if(!rows.offer(row))dropped.incrementAndGet();permits.release();
                                     });
                                 } catch(RuntimeException e) {
-                                    row.completed=System.nanoTime()-start;row.latency=row.completed-row.actual;row.status=FaultController.classify(e);row.pending=adapter.pendingCount();
+                                    row.completed=System.nanoTime()-start;row.latency=row.completed-row.actual;row.status=FaultController.classify(e);if(row.status.equals("correctness_error"))correctnessErrors.incrementAndGet();row.pending=adapter.pendingCount();
                                     inflight.decrementAndGet();if(!rows.offer(row))dropped.incrementAndGet();permits.release();
                                 }
                             }
@@ -98,10 +98,12 @@ public final class ScenarioRunner {
             if(adapter.pendingCount()!=0||adapter.timerCount()!=0)throw new IllegalStateException("Pending resources leaked");
             } finally {sampler.shutdownNow();sampler.awaitTermination(2,TimeUnit.SECONDS);clientMetrics.close();}
         }finally{writingDone.set(true);writer.join(5000);if(writer.isAlive())throw new IllegalStateException("Writer did not stop");}
+        stats.put("correctness_errors",correctnessErrors.get());
         stats.put("writer_dropped",dropped.get());stats.put("client_cpu_ns",((com.sun.management.OperatingSystemMXBean)ManagementFactory.getOperatingSystemMXBean()).getProcessCpuTime());
         stats.put("client_heap_used",ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed());
         stats.put("client_project_threads_alive",Thread.getAllStackTraces().keySet().stream().filter(t->t.isAlive()&&(t.getName().startsWith("rpc-")||t.getName().startsWith("nioEventLoopGroup-"))).count());
         Files.write(Paths.get(output,"client-statistics.json"),new GsonBuilder().setPrettyPrinting().create().toJson(stats).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        if(correctnessErrors.get()!=0)throw new IllegalStateException("Response correctness failed; raw rows retained");
         if(dropped.get()!=0||writerError.get()!=null)throw new IllegalStateException("Result output incomplete",writerError.get());
         System.out.println("SCENARIO_COMPLETE scheduled="+scheduled.get()+" pending=0 timers=0");
     }

@@ -28,14 +28,14 @@ def summarize_run(directory, manifest):
     if manifest['status'] != 'passed':
         return {'run': str(directory), 'status': 'failed', 'error': manifest.get('error')}
     options = manifest['parameters']
-    result = {'run': str(directory), 'status': 'passed', 'kind': options['kind'], 'mode': options['mode'], 'options': options}
+    result = {'run': str(directory), 'status': 'passed', 'kind': options['kind'], 'mode': options['mode'], 'options': options, 'artifact_sha256': manifest['artifact_sha256'] if 'artifact_sha256' in manifest else 'fixture', 'server_artifact_sha256': manifest.get('server_artifact_sha256', 'fixture'), 'cpu_model': manifest.get('cpu_model'), 'cpu_limit': manifest.get('cpu_limit'), 'memory_limit': manifest.get('memory_limit'), 'server_jvm_args': manifest.get('server_jvm_args'), 'effective_server_properties': manifest.get('effective_server_properties', '')}
     if options['kind'] == 'jmh':
         result['measurements'] = []
         for file in sorted(directory.glob('fork-*/jmh.json')):
             for measurement in json.loads(file.read_text()):
                 metric = measurement['primaryMetric']
                 # One invocation is one content-checked successful RPC.
-                data = {'fork': file.parent.name, 'mode': measurement['mode'], 'score': metric['score'], 'unit': metric['scoreUnit'], 'threads': measurement['threads'], 'params': measurement['params'], 'raw_data': metric['rawData']}
+                data = {'fork': file.parent.name, 'mode': measurement['mode'], 'score': metric['score'], 'unit': metric['scoreUnit'], 'threads': measurement['threads'], 'params': measurement['params'], 'raw_data': metric.get('rawData'), 'raw_data_histogram': metric.get('rawDataHistogram')}
                 if metric['scoreUnit'] == 'ops/ms':
                     data['success_qps'] = metric['score'] * 1000
                 data['percentiles'] = metric.get('scorePercentiles', {})
@@ -111,7 +111,9 @@ def summarize(directories, output):
         if not result.get('generator_valid'):
             continue
         o = result['options']
-        key = tuple(o[k] for k in ['fast_rate', 'slow_rate', 'healthy_slow_rate', 'payload', 'connections', 'timeout', 'max_inflight', 'warmup_seconds', 'healthy_seconds', 'overload_seconds', 'recovery_seconds', 'swap_roles', 'scenario'])
+        properties=tuple(sorted(line.strip() for line in result['effective_server_properties'].splitlines() if line.strip() and not line.strip().startswith('mode=')))
+        build=(result['artifact_sha256'],result['server_artifact_sha256'],result['cpu_model'],result['cpu_limit'],result['memory_limit'],tuple(result['server_jvm_args'] or []),properties)
+        key = build + tuple(o[k] for k in ['fast_rate', 'slow_rate', 'healthy_slow_rate', 'payload', 'connections', 'timeout', 'max_inflight', 'warmup_seconds', 'healthy_seconds', 'overload_seconds', 'recovery_seconds', 'swap_roles', 'scenario'])
         for c in result['cohorts']:
             if c['phase'] == 'overload' and c['service'] == 'fast':
                 groups[key][result['mode']].append(c)

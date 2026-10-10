@@ -98,31 +98,34 @@ public final class CuratorUtils {
         log.info("All registered services on the server are cleared:[{}]", REGISTERED_PATH_SET);
     }
 
-    public static CuratorFramework getZkClient() {
-        // check if user has set zk address
-        Properties properties = PropertiesFileUtil.readPropertiesFile(RpcConfigEnum.RPC_CONFIG_PATH.getPropertyValue());
-        String zookeeperAddress = properties != null && properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue()) != null ? properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue()) : DEFAULT_ZOOKEEPER_ADDRESS;
-        // if zkClient has been started, return directly
+    public static synchronized CuratorFramework getZkClient() {
+        if (Thread.currentThread().isInterrupted()) {
+            throw new IllegalStateException("Interrupted before ZooKeeper discovery");
+        }
         if (zkClient != null && zkClient.getState() == CuratorFrameworkState.STARTED) {
             return zkClient;
         }
-        // Retry strategy. Retry 3 times, and will increase the sleep time between retries.
-        RetryPolicy retryPolicy = new ExponentialBackoffRetry(BASE_SLEEP_TIME, MAX_RETRIES);
-        zkClient = CuratorFrameworkFactory.builder()
-                // the server to connect to (can be a server list)
-                .connectString(zookeeperAddress)
-                .retryPolicy(retryPolicy)
-                .build();
-        zkClient.start();
+        Properties properties = PropertiesFileUtil.readPropertiesFile(RpcConfigEnum.RPC_CONFIG_PATH.getPropertyValue());
+        String address = properties == null ? DEFAULT_ZOOKEEPER_ADDRESS
+                : properties.getProperty(RpcConfigEnum.ZK_ADDRESS.getPropertyValue(), DEFAULT_ZOOKEEPER_ADDRESS);
+        CuratorFramework candidate = CuratorFrameworkFactory.builder().connectString(address)
+                .retryPolicy(new ExponentialBackoffRetry(BASE_SLEEP_TIME, MAX_RETRIES)).build();
         try {
-            // wait 30s until connect to the zookeeper
-            if (!zkClient.blockUntilConnected(30, TimeUnit.SECONDS)) {
-                throw new RuntimeException("Time out waiting to connect to ZK!");
+            candidate.start();
+            if (!candidate.blockUntilConnected(30, TimeUnit.SECONDS)) {
+                throw new IllegalStateException("Time out waiting to connect to ZK");
             }
+            // Publish only a fully initialized client. Failed initialization must not enter the shared cache.
+            zkClient = candidate;
+            return zkClient;
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            candidate.close();
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Interrupted waiting for ZooKeeper", e);
+        } catch (RuntimeException e) {
+            candidate.close();
+            throw e;
         }
-        return zkClient;
     }
 
     /**
