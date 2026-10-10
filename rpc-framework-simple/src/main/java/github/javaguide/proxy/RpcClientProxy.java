@@ -62,7 +62,7 @@ public class RpcClientProxy implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         // 1. 创建一个PRC请求
-        log.info("invoked method: [{}]", method.getName());
+        log.debug("invoked method: [{}]", method.getName());
         RpcRequest rpcRequest = RpcRequest.builder().methodName(method.getName())
                 .parameters(args)
                 .interfaceName(method.getDeclaringClass().getName())
@@ -88,7 +88,10 @@ public class RpcClientProxy implements InvocationHandler {
         }
 
         if (rpcResponse.getCode() == null || !rpcResponse.getCode().equals(RpcResponseCodeEnum.SUCCESS.getCode())) {
-            throw new RpcException(RpcErrorMessageEnum.SERVICE_INVOCATION_FAILURE, INTERFACE_NAME + ":" + rpcRequest.getInterfaceName());
+            throw new github.javaguide.exception.RpcCallException(
+                rpcResponse.getCode() != null && rpcResponse.getCode() == 503
+                    ? github.javaguide.exception.RpcCallException.Kind.OVERLOADED
+                    : github.javaguide.exception.RpcCallException.Kind.BUSINESS, rpcResponse.getMessage());
         }
     }
 }
