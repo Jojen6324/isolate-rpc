@@ -17,3 +17,7 @@
 .classpath
 .project
 .DS_Store
+/rpc-benchmark-*/target/
+/results/
+
+__pycache__/

@@ -16,8 +16,9 @@ class RequestLifecycleTest {
     @Test void timeoutAndCancellationCleanPendingAndTimers() throws Exception {
         EmbeddedChannel channel = new EmbeddedChannel();
         try (NettyRpcClient client = new NettyRpcClient(r -> new InetSocketAddress("127.0.0.1", 1))) {
+            long timeoutStart = System.nanoTime();
             CompletableFuture<?> timed = client.sendRpcRequestAsync(request("timeout"), 30, channel);
-            assertEquals(TIMEOUT, failure(timed).getKind()); assertEquals(0, client.pendingCount()); assertEquals(0, client.timeoutTaskCount());
+            assertEquals(TIMEOUT, failure(timed).getKind()); assertTrue(System.nanoTime()-timeoutStart < TimeUnit.MILLISECONDS.toNanos(530), "30ms timeout plus 500ms tolerance"); assertEquals(0, client.pendingCount()); assertEquals(0, client.timeoutTaskCount());
             CompletableFuture<?> cancelled = client.sendRpcRequestAsync(request("cancel"), 60000, channel);
             assertTrue(cancelled.cancel(false)); assertTrue(cancelled.isCancelled());
             assertEquals(0, client.pendingCount()); assertEquals(0, client.timeoutTaskCount());
@@ -77,6 +78,7 @@ class RequestLifecycleTest {
         ExecutorService racers = Executors.newFixedThreadPool(3);
         ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1); scheduler.setRemoveOnCancelPolicy(true);
         EmbeddedChannel channel = new EmbeddedChannel(); UnprocessedRequests requests = new UnprocessedRequests();
+        int successes=0, timeouts=0, cancellations=0;
         try {
             for (int i = 0; i < 1000; i++) {
                 String id = "race-"+i; CompletableFuture<?> f = requests.register(id); requests.bind(id, channel);
@@ -87,7 +89,11 @@ class RequestLifecycleTest {
                 Future<?> c = racers.submit(() -> { await(start); f.cancel(false); });
                 start.countDown(); a.get(); b.get(); c.get();
                 assertTrue(f.isDone()); assertEquals(0, requests.size()); assertEquals(0, scheduler.getQueue().size());
+                if(f.isCancelled())cancellations++;
+                else try{f.get();successes++;}catch(ExecutionException e){assertEquals(TIMEOUT,((RpcCallException)e.getCause()).getKind());timeouts++;}
             }
+            assertEquals(1000,successes+timeouts+cancellations);
+            System.out.println("RACE_RESULTS {\"requests\":1000,\"success\":"+successes+",\"timeout\":"+timeouts+",\"cancelled\":"+cancellations+",\"pending\":0,\"timers\":0}");
         } finally { racers.shutdownNow(); scheduler.shutdownNow(); channel.finishAndReleaseAll(); }
     }
     private static void await(CountDownLatch latch) { try { latch.await(); } catch (InterruptedException e) { throw new RuntimeException(e); } }

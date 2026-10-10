@@ -34,6 +34,9 @@
         <module>example-client</module>
         <module>example-server</module>
         <module>rpc-framework-common</module>
+        <module>rpc-benchmark-api</module>
+        <module>rpc-benchmark-server</module>
+        <module>rpc-benchmark-client</module>
     </modules>
     <dependencies>
         <!-- lombok -->
@@ -72,6 +75,10 @@
             <artifactId>junit-platform-runner</artifactId>
             <version>${junit.platform.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.vintage</groupId><artifactId>junit-vintage-engine</artifactId>
+            <version>${junit.jupiter.version}</version><scope>test</scope>
         </dependency>
     </dependencies>
     <build>

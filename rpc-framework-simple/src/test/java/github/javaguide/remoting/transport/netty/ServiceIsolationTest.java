@@ -24,8 +24,9 @@ public class ServiceIsolationTest {
         }
     }
     private static final AtomicInteger IDS = new AtomicInteger();
-    private RpcRequest request(String group, String value) {
-        return RpcRequest.builder().interfaceName(TestService.class.getCanonicalName()).group(group).version("v1")
+    private RpcRequest request(String group, String value) { return request(group, value, "v1"); }
+    private RpcRequest request(String group, String value, String version) {
+        return RpcRequest.builder().interfaceName(TestService.class.getCanonicalName()).group(group).version(version)
             .methodName("call").paramTypes(new Class<?>[]{String.class}).parameters(new Object[]{value}).requestId("tcp-"+IDS.incrementAndGet()).build();
     }
     private RpcServiceConfig config(String group, ControlledService service) { return RpcServiceConfig.builder().service(service).group(group).version("v1").build(); }
@@ -95,6 +96,26 @@ public class ServiceIsolationTest {
                 assertEquals("reconnected",a.sendRpcRequestAsync(request("fast","reconnected")).get(2,TimeUnit.SECONDS).getData());
                 assertEquals(0,a.pendingCount());assertEquals(0,b.pendingCount());service.release.countDown();
             } finally {service.release.countDown();}
+        }
+    }
+    public static class VersionedService implements TestService {
+        final String prefix; public VersionedService(String prefix){this.prefix=prefix;}
+        public String call(String value){return prefix+":"+value;}
+    }
+    @Test void sameInterfaceDifferentGroupAndVersionRouteToSeparatePools() throws Exception {
+        java.util.List<RpcServiceConfig> inventory=Arrays.asList(
+            RpcServiceConfig.builder().service(new VersionedService("v1")).group("fast").version("v1").build(),
+            RpcServiceConfig.builder().service(new VersionedService("v2")).group("fast").version("v2").build(),
+            RpcServiceConfig.builder().service(new VersionedService("other")).group("other").version("v1").build());
+        try(NettyRpcServer server=new NettyRpcServer(inventory,new InetSocketAddress("127.0.0.1",0),new RpcExecutorConfig(RpcExecutorConfig.Mode.ISOLATED,3,3,1,1,100))) {
+            InetSocketAddress address=server.startAsync();
+            try(NettyRpcClient client=new NettyRpcClient(r->address)) {
+                RpcRequest v1=request("fast","hello"),v2=request("fast","hello","v2"),other=request("other","hello");
+                assertEquals("v1:hello",client.sendRpcRequestAsync(v1).get(2,TimeUnit.SECONDS).getData());
+                assertEquals("v2:hello",client.sendRpcRequestAsync(v2).get(2,TimeUnit.SECONDS).getData());
+                assertEquals("other:hello",client.sendRpcRequestAsync(other).get(2,TimeUnit.SECONDS).getData());
+                assertEquals(3,server.metrics().size());
+            }
         }
     }
     @Test void serviceIdentityDoesNotUseAmbiguousConcatenationAndShutdownRejects() throws Exception {

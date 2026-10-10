@@ -72,7 +72,7 @@ public class NettyRpcServer implements AutoCloseable {
     }
     public void start(){startAsync();try{listener.closeFuture().syncUninterruptibly();}finally{close();}}
     public Map<ServiceKey,ExecutorMetrics> metrics(){return executors.metrics();}
-    @Override public void close(){
+    @Override public synchronized void close(){
         if(!closed.compareAndSet(false,true))return;
         if(executors!=null)executors.stopAccepting();
         if(listener!=null)listener.close().syncUninterruptibly();
