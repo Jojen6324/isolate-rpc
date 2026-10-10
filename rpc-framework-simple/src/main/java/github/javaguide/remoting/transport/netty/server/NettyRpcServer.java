@@ -58,7 +58,7 @@ public class NettyRpcServer {
             ServerBootstrap b = new ServerBootstrap();
             // channel间可以共享的handler
             RpcMessageCodec rpcMessageCodec = new RpcMessageCodec();
-            NettyRpcServerHandler nettyRpcServerHandler = new NettyRpcServerHandler();
+
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     // TCP默认开启了 Nagle 算法，该算法的作用是尽可能的发送大数据快，减少网络传输。TCP_NODELAY 参数的作用就是控制是否启用 Nagle 算法。
@@ -80,7 +80,7 @@ public class NettyRpcServer {
                             // RPCMessage       编解码器
                             p.addLast(rpcMessageCodec);
                             // 可共享的 serverHandler
-                            p.addLast(serviceHandlerGroup, nettyRpcServerHandler);
+                            p.addLast(serviceHandlerGroup, new NettyRpcServerHandler());
                         }
                     });
 

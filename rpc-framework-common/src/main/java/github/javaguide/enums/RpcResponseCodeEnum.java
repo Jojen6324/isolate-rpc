@@ -14,7 +14,10 @@ import lombok.ToString;
 public enum RpcResponseCodeEnum {
 
     SUCCESS(200, "The remote call is successful"),
-    FAIL(500, "The remote call is fail");
+    FAIL(500, "The remote call is fail"),
+    BUSINESS_ERROR(501, "Remote business failure"),
+    OVERLOADED(503, "Service executor exhausted"),
+    SHUTTING_DOWN(504, "Server shutting down");
     private final int code;
 
     private final String message;
