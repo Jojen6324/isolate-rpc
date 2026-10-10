@@ -472,4 +472,3 @@ JMH 适配、故障断言通过、隔离 A/B 有原始数据是三个不同验�
 - [SOFARPC Benchmark](https://github.com/sofastack/sofa-rpc-benchmark)
 
 这份报告是选型与执行计划，不是已完成实现或已取得性能提升的证明。
-
