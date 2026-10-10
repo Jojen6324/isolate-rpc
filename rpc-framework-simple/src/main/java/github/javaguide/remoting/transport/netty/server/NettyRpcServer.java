@@ -1,102 +1,87 @@
 package github.javaguide.remoting.transport.netty.server;
-
-import github.javaguide.config.CustomShutdownHook;
 import github.javaguide.config.RpcServiceConfig;
 import github.javaguide.factory.SingletonFactory;
-import github.javaguide.provider.ServiceProvider;
 import github.javaguide.provider.impl.ZkServiceProviderImpl;
-import github.javaguide.remoting.transport.netty.codec.RpcMessageCodec;
-import github.javaguide.remoting.transport.netty.codec.RpcMessageFrameDecoder;
-import github.javaguide.utils.RuntimeUtil;
-import github.javaguide.utils.concurrent.threadpool.ThreadPoolFactoryUtil;
+import github.javaguide.registry.zk.util.CuratorUtils;
+import github.javaguide.remoting.dto.RpcRequest;
+import github.javaguide.remoting.transport.netty.codec.*;
+import github.javaguide.executor.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.timeout.IdleStateHandler;
-import io.netty.util.concurrent.DefaultEventExecutorGroup;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import java.net.InetAddress;
+import java.net.*;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.lang.reflect.*;
 
-/**
- * Server. Receive the client message, call the corresponding method according to the client message,
- * and then return the result to the client.
- *
- * @author shuang.kou
- * @createTime 2020年05月25日 16:42:00
- */
-@Slf4j
+/** One dispatch path for both executor modes. Live service inventory is fixed at startup. */
 @Component
-public class NettyRpcServer {
-
-    public static final int PORT = 9998;
-
-    private final ServiceProvider serviceProvider = SingletonFactory.getInstance(ZkServiceProviderImpl.class);
-
-    public void registerService(RpcServiceConfig rpcServiceConfig) {
-        serviceProvider.publishService(rpcServiceConfig);
+public class NettyRpcServer implements AutoCloseable {
+    public static final int PORT=9998;
+    private final boolean registryBacked;
+    private final Collection<RpcServiceConfig> localServices;
+    private final InetSocketAddress listen;
+    private final RpcExecutorConfig config;
+    private final AtomicBoolean closed=new AtomicBoolean();
+    private final Map<ServiceKey,Object> services=new HashMap<>();
+    private ServiceExecutorManager executors;
+    private EventLoopGroup boss,worker;
+    private Channel listener;
+    private Thread hook;
+    private boolean started;
+    public NettyRpcServer() { this(null,defaultAddress(),RpcExecutorConfig.defaults()); }
+    public NettyRpcServer(Collection<RpcServiceConfig> services, InetSocketAddress listen, RpcExecutorConfig config) {
+        this.registryBacked=services==null; this.localServices=services==null?null:new ArrayList<>(services); this.listen=listen; this.config=config;
     }
-
-    @SneakyThrows
-    public void start() {
-        CustomShutdownHook.getCustomShutdownHook().clearAll();
-        String host = InetAddress.getLocalHost().getHostAddress();
-        EventLoopGroup bossGroup = new NioEventLoopGroup(1);
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        DefaultEventExecutorGroup serviceHandlerGroup = new DefaultEventExecutorGroup(
-                RuntimeUtil.cpus() * 2,
-                ThreadPoolFactoryUtil.createThreadFactory("service-handler-group", false)
-        );
+    private static InetSocketAddress defaultAddress() {
+        try{return new InetSocketAddress(InetAddress.getLocalHost().getHostAddress(),PORT);}
+        catch(UnknownHostException e){throw new IllegalStateException(e);}
+    }
+    public synchronized void registerService(RpcServiceConfig service) {
+        if(started||closed.get())throw new IllegalStateException("Service inventory already fixed");
+        if(registryBacked)SingletonFactory.getInstance(ZkServiceProviderImpl.class).publishService(service);
+        else localServices.add(service);
+    }
+    public synchronized InetSocketAddress startAsync() {
+        if(started||closed.get())throw new IllegalStateException("Server cannot start twice"); started=true;
+        Collection<RpcServiceConfig> inventory=registryBacked?SingletonFactory.getInstance(ZkServiceProviderImpl.class).getServices():localServices;
+        for(RpcServiceConfig c:inventory) if(services.put(ServiceKey.of(c),c.getService())!=null)throw new IllegalArgumentException("Duplicate service");
+        executors=new ServiceExecutorManager(services.keySet(),config);
+        boss=new NioEventLoopGroup(1); worker=new NioEventLoopGroup(2);
         try {
-            ServerBootstrap b = new ServerBootstrap();
-            // channel间可以共享的handler
-            RpcMessageCodec rpcMessageCodec = new RpcMessageCodec();
-
-            b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class)
-                    // TCP默认开启了 Nagle 算法，该算法的作用是尽可能的发送大数据快，减少网络传输。TCP_NODELAY 参数的作用就是控制是否启用 Nagle 算法。
-                    .childOption(ChannelOption.TCP_NODELAY, true)
-                    // 是否开启 TCP 底层心跳机制
-                    .childOption(ChannelOption.SO_KEEPALIVE, true)
-                    //表示系统用于临时存放已完成三次握手的请求的队列的最大长度,如果连接建立频繁，服务器处理创建新连接较慢，可以适当调大这个参数
-                    .option(ChannelOption.SO_BACKLOG, 128)
-                    .handler(new LoggingHandler(LogLevel.INFO))
-                    // 当客户端第一次进行请求的时候才会进行初始化
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel ch) {
-                            // 30 秒之内没有收到客户端请求的话就关闭连接
-                            ChannelPipeline p = ch.pipeline();
-                            p.addLast(new IdleStateHandler(30, 0, 0, TimeUnit.SECONDS));
-                            // RPCMessageFrame  解码器
-                            p.addLast(new RpcMessageFrameDecoder());
-                            // RPCMessage       编解码器
-                            p.addLast(rpcMessageCodec);
-                            // 可共享的 serverHandler
-                            p.addLast(serviceHandlerGroup, new NettyRpcServerHandler());
-                        }
-                    });
-
-            // 绑定端口，同步等待绑定成功
-            ChannelFuture f = b.bind(host, PORT).sync();
-            // 等待服务端监听端口关闭
-            f.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            log.error("occur exception when start server:", e);
-        } finally {
-            log.error("shutdown bossGroup and workerGroup");
-            bossGroup.shutdownGracefully();
-            workerGroup.shutdownGracefully();
-            serviceHandlerGroup.shutdownGracefully();
+            listener=new ServerBootstrap().group(boss,worker).channel(NioServerSocketChannel.class)
+                .childOption(ChannelOption.TCP_NODELAY,true).childOption(ChannelOption.SO_KEEPALIVE,true)
+                .childHandler(new ChannelInitializer<SocketChannel>(){
+                    @Override protected void initChannel(SocketChannel ch){ch.pipeline().addLast(new IdleStateHandler(30,0,0,TimeUnit.SECONDS),
+                        new RpcMessageFrameDecoder(),new RpcMessageCodec(),new NettyRpcServerHandler(NettyRpcServer.this::invoke,executors));}
+                }).bind(listen).syncUninterruptibly().channel();
+            hook=new Thread(this::close,"rpc-server-shutdown"); Runtime.getRuntime().addShutdownHook(hook);
+            return (InetSocketAddress)listener.localAddress();
+        } catch(RuntimeException e){close();throw e;}
+    }
+    private Object invoke(RpcRequest request) {
+        Object service=services.get(ServiceKey.of(request));
+        if(service==null)throw new IllegalArgumentException("Unknown service");
+        try {return service.getClass().getMethod(request.getMethodName(),request.getParamTypes()).invoke(service,request.getParameters());}
+        catch(ReflectiveOperationException e){throw new IllegalStateException("Business invocation failed",e);}
+    }
+    public void start(){startAsync();try{listener.closeFuture().syncUninterruptibly();}finally{close();}}
+    public Map<ServiceKey,ExecutorMetrics> metrics(){return executors.metrics();}
+    @Override public void close(){
+        if(!closed.compareAndSet(false,true))return;
+        if(executors!=null)executors.stopAccepting();
+        if(listener!=null)listener.close().syncUninterruptibly();
+        try {if(executors!=null)executors.close();}
+        finally {
+            if(worker!=null)worker.shutdownGracefully(0,2,TimeUnit.SECONDS).syncUninterruptibly();
+            if(boss!=null)boss.shutdownGracefully(0,2,TimeUnit.SECONDS).syncUninterruptibly();
+            if(registryBacked && listener!=null)CuratorUtils.clearRegistry(CuratorUtils.getZkClient(),(InetSocketAddress)listener.localAddress());
+            if(hook!=null && Thread.currentThread()!=hook)try{Runtime.getRuntime().removeShutdownHook(hook);}catch(IllegalStateException ignored){}
         }
     }
-
-
 }

@@ -23,7 +23,10 @@ public class CustomShutdownHook {
         return CUSTOM_SHUTDOWN_HOOK;
     }
 
+    private final java.util.concurrent.atomic.AtomicBoolean registered = new java.util.concurrent.atomic.AtomicBoolean();
+
     public void clearAll() {
+        if (!registered.compareAndSet(false, true)) return;
         log.info("addShutdownHook for clearAll");
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {

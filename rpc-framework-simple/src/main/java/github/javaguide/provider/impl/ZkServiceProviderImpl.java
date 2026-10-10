@@ -31,6 +31,8 @@ public class ZkServiceProviderImpl implements ServiceProvider {
     private final Map<String, Object> serviceMap;
     private final Set<String> registeredService;
     private final ServiceRegistry serviceRegistry;
+    private final Map<String, RpcServiceConfig> configs = new ConcurrentHashMap<>();
+    public java.util.Collection<RpcServiceConfig> getServices() { return new java.util.ArrayList<>(configs.values()); }
 
     public ZkServiceProviderImpl() {
         serviceMap = new ConcurrentHashMap<>();
@@ -44,6 +46,7 @@ public class ZkServiceProviderImpl implements ServiceProvider {
         if (registeredService.contains(rpcServiceName)) {
             return;
         }
+        configs.put(rpcServiceName, rpcServiceConfig);
         registeredService.add(rpcServiceName);
         serviceMap.put(rpcServiceName, rpcServiceConfig.getService());
         log.info("Add service: {} and interfaces:{}", rpcServiceName, rpcServiceConfig.getService().getClass().getInterfaces());
