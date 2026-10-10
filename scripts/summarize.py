@@ -118,15 +118,20 @@ def summarize(directories, output):
             if c['phase'] == 'overload' and c['service'] == 'fast':
                 groups[key][result['mode']].append(c)
     lines += ['', '## Repeated matched A/B (per-run medians and ranges)', '', '| Parameters | Mode | Runs | Success QPS median [min,max] | P95 ms median [min,max] | Success % median |', '|---|---|---:|---|---|---:|']
+    comparisons=[]
     for key, modes in groups.items():
+        label=f'build {key[0][:8]}; F/S {key[7]:g}/{key[8]:g}; conn {key[11]}; payload {key[10]}; phases {key[14:18]}; swap {key[18]}; {key[19]}'
         for mode, cohorts in modes.items():
             qps = [c['success_qps'] for c in cohorts]; p95 = [c['p95_ms'] for c in cohorts if c['p95_ms'] is not None]; rate = [c['success_rate']*100 for c in cohorts if c['success_rate'] is not None]
             span = lambda data: f'{median(data):.2f} [{min(data):.2f},{max(data):.2f}]' if data else 'N/A'
-            lines.append(f'| {key} | {mode} | {len(cohorts)} | {span(qps)} | {span(p95)} | {number(median(rate) if rate else None)} |')
+            lines.append(f'| {label} | {mode} | {len(cohorts)} | {span(qps)} | {span(p95)} | {number(median(rate) if rate else None)} |')
         if all(len(modes[m]) >= 3 for m in ['shared', 'isolated']):
-            v1 = median(c['p95_ms'] for c in modes['shared'] if c['p95_ms'] is not None)
-            v2 = median(c['p95_ms'] for c in modes['isolated'] if c['p95_ms'] is not None)
-            lines += ['', f'Matched median per-run P95 change: {(v1-v2)/v1*100:.2f}% (not a pooled quantile).']
+            v1_samples=[c['p95_ms'] for c in modes['shared'] if c['p95_ms'] is not None]
+            v2_samples=[c['p95_ms'] for c in modes['isolated'] if c['p95_ms'] is not None]
+            if v1_samples and v2_samples and median(v1_samples)>0:
+                comparisons.append(f'{label}: matched median per-run P95 change {(median(v1_samples)-median(v2_samples))/median(v1_samples)*100:.2f}% (not a pooled quantile).')
+            else: comparisons.append(f'{label}: no comparable successful-request P95 samples.')
+    lines += ['']+comparisons
     lines += ['', '## JMH', '', '| Run | Mode | Metric | Threads | Payload | Score | Unit | Success QPS |', '|---|---|---|---:|---:|---:|---|---:|']
     for r in results:
         for m in r.get('measurements', []):
