@@ -1,0 +1,344 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] guide-rpc-framework                                                [pom]
+[INFO] rpc-framework-common                                               [jar]
+[INFO] rpc-framework-simple                                               [jar]
+[INFO] hello-service-api                                                  [jar]
+[INFO] example-client                                                     [jar]
+[INFO] example-server                                                     [jar]
+[INFO] rpc-benchmark-api                                                  [jar]
+[INFO] rpc-benchmark-server                                               [jar]
+[INFO] rpc-benchmark-client                                               [jar]
+[INFO] 
+[INFO] ----------------< github.javaguide:guide-rpc-framework >----------------
+[INFO] Building guide-rpc-framework 1.0-SNAPSHOT                          [1/9]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ guide-rpc-framework ---
+[INFO] Installing /workspace/isolate-rpc/pom.xml to /workspace/.m2/repository/github/javaguide/guide-rpc-framework/1.0-SNAPSHOT/guide-rpc-framework-1.0-SNAPSHOT.pom
+[INFO] 
+[INFO] ---------------< github.javaguide:rpc-framework-common >----------------
+[INFO] Building rpc-framework-common 1.0-SNAPSHOT                         [2/9]
+[INFO]   from rpc-framework-common/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ rpc-framework-common ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/rpc-framework-common/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ rpc-framework-common ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ rpc-framework-common ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 7 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ rpc-framework-common ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ rpc-framework-common ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ rpc-framework-common ---
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ rpc-framework-common ---
+[INFO] Installing /workspace/isolate-rpc/rpc-framework-common/pom.xml to /workspace/.m2/repository/github/javaguide/rpc-framework-common/1.0-SNAPSHOT/rpc-framework-common-1.0-SNAPSHOT.pom
+[INFO] Installing /workspace/isolate-rpc/rpc-framework-common/target/rpc-framework-common-1.0-SNAPSHOT.jar to /workspace/.m2/repository/github/javaguide/rpc-framework-common/1.0-SNAPSHOT/rpc-framework-common-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] ---------------< github.javaguide:rpc-framework-simple >----------------
+[INFO] Building rpc-framework-simple 1.0-SNAPSHOT                         [3/9]
+[INFO]   from rpc-framework-simple/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ rpc-framework-simple ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 6 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ rpc-framework-simple ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ rpc-framework-simple ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 8 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ rpc-framework-simple ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 13 source files to /workspace/isolate-rpc/rpc-framework-simple/target/test-classes
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ rpc-framework-simple ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ rpc-framework-simple ---
+[INFO] Building jar: /workspace/isolate-rpc/rpc-framework-simple/target/rpc-framework-simple-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ rpc-framework-simple ---
+[INFO] Installing /workspace/isolate-rpc/rpc-framework-simple/pom.xml to /workspace/.m2/repository/github/javaguide/rpc-framework-simple/1.0-SNAPSHOT/rpc-framework-simple-1.0-SNAPSHOT.pom
+[INFO] Installing /workspace/isolate-rpc/rpc-framework-simple/target/rpc-framework-simple-1.0-SNAPSHOT.jar to /workspace/.m2/repository/github/javaguide/rpc-framework-simple/1.0-SNAPSHOT/rpc-framework-simple-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] -----------------< github.javaguide:hello-service-api >-----------------
+[INFO] Building hello-service-api 1.0-SNAPSHOT                            [4/9]
+[INFO]   from hello-service-api/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ hello-service-api ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/hello-service-api/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ hello-service-api ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ hello-service-api ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/hello-service-api/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ hello-service-api ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ hello-service-api ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ hello-service-api ---
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ hello-service-api ---
+[INFO] Installing /workspace/isolate-rpc/hello-service-api/pom.xml to /workspace/.m2/repository/github/javaguide/hello-service-api/1.0-SNAPSHOT/hello-service-api-1.0-SNAPSHOT.pom
+[INFO] Installing /workspace/isolate-rpc/hello-service-api/target/hello-service-api-1.0-SNAPSHOT.jar to /workspace/.m2/repository/github/javaguide/hello-service-api/1.0-SNAPSHOT/hello-service-api-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] ------------------< github.javaguide:example-client >-------------------
+[INFO] Building example-client 1.0-SNAPSHOT                               [5/9]
+[INFO]   from example-client/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ example-client ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ example-client ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ example-client ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/example-client/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ example-client ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ example-client ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ example-client ---
+[INFO] Building jar: /workspace/isolate-rpc/example-client/target/example-client-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ example-client ---
+[INFO] Installing /workspace/isolate-rpc/example-client/pom.xml to /workspace/.m2/repository/github/javaguide/example-client/1.0-SNAPSHOT/example-client-1.0-SNAPSHOT.pom
+[INFO] Installing /workspace/isolate-rpc/example-client/target/example-client-1.0-SNAPSHOT.jar to /workspace/.m2/repository/github/javaguide/example-client/1.0-SNAPSHOT/example-client-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] ------------------< github.javaguide:example-server >-------------------
+[INFO] Building example-server 1.0-SNAPSHOT                               [6/9]
+[INFO]   from example-server/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ example-server ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ example-server ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ example-server ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/example-server/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ example-server ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ example-server ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ example-server ---
+[INFO] Building jar: /workspace/isolate-rpc/example-server/target/example-server-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ example-server ---
+[INFO] Installing /workspace/isolate-rpc/example-server/pom.xml to /workspace/.m2/repository/github/javaguide/example-server/1.0-SNAPSHOT/example-server-1.0-SNAPSHOT.pom
+[INFO] Installing /workspace/isolate-rpc/example-server/target/example-server-1.0-SNAPSHOT.jar to /workspace/.m2/repository/github/javaguide/example-server/1.0-SNAPSHOT/example-server-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] -----------------< github.javaguide:rpc-benchmark-api >-----------------
+[INFO] Building rpc-benchmark-api 1.0-SNAPSHOT                            [7/9]
+[INFO]   from rpc-benchmark-api/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ rpc-benchmark-api ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/rpc-benchmark-api/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ rpc-benchmark-api ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ rpc-benchmark-api ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/rpc-benchmark-api/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ rpc-benchmark-api ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ rpc-benchmark-api ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ rpc-benchmark-api ---
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ rpc-benchmark-api ---
+[INFO] Installing /workspace/isolate-rpc/rpc-benchmark-api/pom.xml to /workspace/.m2/repository/github/javaguide/rpc-benchmark-api/1.0-SNAPSHOT/rpc-benchmark-api-1.0-SNAPSHOT.pom
+[INFO] Installing /workspace/isolate-rpc/rpc-benchmark-api/target/rpc-benchmark-api-1.0-SNAPSHOT.jar to /workspace/.m2/repository/github/javaguide/rpc-benchmark-api/1.0-SNAPSHOT/rpc-benchmark-api-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] ---------------< github.javaguide:rpc-benchmark-server >----------------
+[INFO] Building rpc-benchmark-server 1.0-SNAPSHOT                         [8/9]
+[INFO]   from rpc-benchmark-server/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ rpc-benchmark-server ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/rpc-benchmark-server/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ rpc-benchmark-server ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ rpc-benchmark-server ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/rpc-benchmark-server/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ rpc-benchmark-server ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ rpc-benchmark-server ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ rpc-benchmark-server ---
+[INFO] Building jar: /workspace/isolate-rpc/rpc-benchmark-server/target/rpc-benchmark-server-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ rpc-benchmark-server ---
+[INFO] Installing /workspace/isolate-rpc/rpc-benchmark-server/pom.xml to /workspace/.m2/repository/github/javaguide/rpc-benchmark-server/1.0-SNAPSHOT/rpc-benchmark-server-1.0-SNAPSHOT.pom
+[INFO] Installing /workspace/isolate-rpc/rpc-benchmark-server/target/rpc-benchmark-server-1.0-SNAPSHOT.jar to /workspace/.m2/repository/github/javaguide/rpc-benchmark-server/1.0-SNAPSHOT/rpc-benchmark-server-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] ---------------< github.javaguide:rpc-benchmark-client >----------------
+[INFO] Building rpc-benchmark-client 1.0-SNAPSHOT                         [9/9]
+[INFO]   from rpc-benchmark-client/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ rpc-benchmark-client ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/rpc-benchmark-client/src/main/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ rpc-benchmark-client ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ rpc-benchmark-client ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /workspace/isolate-rpc/rpc-benchmark-client/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ rpc-benchmark-client ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ rpc-benchmark-client ---
+[INFO] Tests are skipped.
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ rpc-benchmark-client ---
+[INFO] Building jar: /workspace/isolate-rpc/rpc-benchmark-client/target/rpc-benchmark-client-1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- shade:3.5.3:shade (default) @ rpc-benchmark-client ---
+[INFO] Including github.javaguide:rpc-benchmark-api:jar:1.0-SNAPSHOT in the shaded jar.
+[INFO] Including github.javaguide:rpc-framework-simple:jar:1.0-SNAPSHOT in the shaded jar.
+[INFO] Including github.javaguide:rpc-framework-common:jar:1.0-SNAPSHOT in the shaded jar.
+[INFO] Including io.netty:netty-all:jar:4.1.42.Final in the shaded jar.
+[INFO] Including com.esotericsoftware:kryo:jar:4.0.2 in the shaded jar.
+[INFO] Including com.esotericsoftware:reflectasm:jar:1.11.3 in the shaded jar.
+[INFO] Including org.ow2.asm:asm:jar:5.0.4 in the shaded jar.
+[INFO] Including com.esotericsoftware:minlog:jar:1.3.0 in the shaded jar.
+[INFO] Including org.objenesis:objenesis:jar:2.5.1 in the shaded jar.
+[INFO] Including org.apache.curator:curator-framework:jar:4.2.0 in the shaded jar.
+[INFO] Including org.apache.curator:curator-client:jar:4.2.0 in the shaded jar.
+[INFO] Including org.apache.zookeeper:zookeeper:jar:3.5.4-beta in the shaded jar.
+[INFO] Including commons-cli:commons-cli:jar:1.2 in the shaded jar.
+[INFO] Including log4j:log4j:jar:1.2.17 in the shaded jar.
+[INFO] Including org.apache.yetus:audience-annotations:jar:0.5.0 in the shaded jar.
+[INFO] Including io.netty:netty:jar:3.10.6.Final in the shaded jar.
+[INFO] Including org.apache.curator:curator-recipes:jar:4.2.0 in the shaded jar.
+[INFO] Including org.springframework:spring-context:jar:5.2.7.RELEASE in the shaded jar.
+[INFO] Including org.springframework:spring-aop:jar:5.2.7.RELEASE in the shaded jar.
+[INFO] Including org.springframework:spring-beans:jar:5.2.7.RELEASE in the shaded jar.
+[INFO] Including org.springframework:spring-core:jar:5.2.7.RELEASE in the shaded jar.
+[INFO] Including org.springframework:spring-jcl:jar:5.2.7.RELEASE in the shaded jar.
+[INFO] Including org.springframework:spring-expression:jar:5.2.7.RELEASE in the shaded jar.
+[INFO] Including io.protostuff:protostuff-core:jar:1.7.2 in the shaded jar.
+[INFO] Including io.protostuff:protostuff-api:jar:1.7.2 in the shaded jar.
+[INFO] Including io.protostuff:protostuff-runtime:jar:1.7.2 in the shaded jar.
+[INFO] Including io.protostuff:protostuff-collectionschema:jar:1.7.2 in the shaded jar.
+[INFO] Including com.caucho:hessian:jar:4.0.65 in the shaded jar.
+[INFO] Including org.openjdk.jmh:jmh-core:jar:1.37 in the shaded jar.
+[INFO] Including net.sf.jopt-simple:jopt-simple:jar:5.0.4 in the shaded jar.
+[INFO] Including org.apache.commons:commons-math3:jar:3.6.1 in the shaded jar.
+[INFO] Including com.google.code.gson:gson:jar:2.10.1 in the shaded jar.
+[INFO] Including com.google.guava:guava:jar:30.1.1-jre in the shaded jar.
+[INFO] Including com.google.guava:failureaccess:jar:1.0.1 in the shaded jar.
+[INFO] Including com.google.guava:listenablefuture:jar:9999.0-empty-to-avoid-conflict-with-guava in the shaded jar.
+[INFO] Including com.google.code.findbugs:jsr305:jar:3.0.2 in the shaded jar.
+[INFO] Including org.checkerframework:checker-qual:jar:3.8.0 in the shaded jar.
+[INFO] Including com.google.errorprone:error_prone_annotations:jar:2.5.1 in the shaded jar.
+[INFO] Including com.google.j2objc:j2objc-annotations:jar:1.3 in the shaded jar.
+[INFO] Including org.slf4j:slf4j-api:jar:1.7.25 in the shaded jar.
+[INFO] Including org.slf4j:slf4j-simple:jar:1.7.25 in the shaded jar.
+[WARNING] spring-aop-5.2.7.RELEASE.jar, spring-beans-5.2.7.RELEASE.jar, spring-context-5.2.7.RELEASE.jar define 3 overlapping resources: 
+[WARNING]   - META-INF/spring.handlers
+[WARNING]   - META-INF/spring.schemas
+[WARNING]   - META-INF/spring.tooling
+[WARNING] curator-client-4.2.0.jar, failureaccess-1.0.1.jar define 2 overlapping resources: 
+[WARNING]   - META-INF/maven/com.google.guava/failureaccess/pom.properties
+[WARNING]   - META-INF/maven/com.google.guava/failureaccess/pom.xml
+[WARNING] curator-client-4.2.0.jar, listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar define 2 overlapping resources: 
+[WARNING]   - META-INF/maven/com.google.guava/listenablefuture/pom.properties
+[WARNING]   - META-INF/maven/com.google.guava/listenablefuture/pom.xml
+[WARNING] audience-annotations-0.5.0.jar, curator-client-4.2.0.jar, curator-framework-4.2.0.jar, curator-recipes-4.2.0.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/DEPENDENCIES
+[WARNING] checker-qual-3.8.0.jar, commons-cli-1.2.jar, commons-math3-3.6.1.jar, netty-3.10.6.Final.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/LICENSE.txt
+[WARNING] commons-cli-1.2.jar, commons-math3-3.6.1.jar, netty-3.10.6.Final.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/NOTICE.txt
+[WARNING] audience-annotations-0.5.0.jar, curator-client-4.2.0.jar, curator-framework-4.2.0.jar, curator-recipes-4.2.0.jar, log4j-1.2.17.jar, objenesis-2.5.1.jar define 2 overlapping resources: 
+[WARNING]   - META-INF/LICENSE
+[WARNING]   - META-INF/NOTICE
+[WARNING] asm-5.0.4.jar, audience-annotations-0.5.0.jar, checker-qual-3.8.0.jar, commons-cli-1.2.jar, commons-math3-3.6.1.jar, curator-client-4.2.0.jar, curator-framework-4.2.0.jar, curator-recipes-4.2.0.jar, error_prone_annotations-2.5.1.jar, failureaccess-1.0.1.jar, gson-2.10.1.jar, guava-30.1.1-jre.jar, hessian-4.0.65.jar, j2objc-annotations-1.3.jar, jmh-core-1.37.jar, jopt-simple-5.0.4.jar, jsr305-3.0.2.jar, kryo-4.0.2.jar, listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar, log4j-1.2.17.jar, minlog-1.3.0.jar, netty-3.10.6.Final.jar, netty-all-4.1.42.Final.jar, objenesis-2.5.1.jar, protostuff-api-1.7.2.jar, protostuff-collectionschema-1.7.2.jar, protostuff-core-1.7.2.jar, protostuff-runtime-1.7.2.jar, reflectasm-1.11.3.jar, rpc-benchmark-api-1.0-SNAPSHOT.jar, rpc-benchmark-client-1.0-SNAPSHOT.jar, rpc-framework-common-1.0-SNAPSHOT.jar, rpc-framework-simple-1.0-SNAPSHOT.jar, slf4j-api-1.7.25.jar, slf4j-simple-1.7.25.jar, spring-aop-5.2.7.RELEASE.jar, spring-beans-5.2.7.RELEASE.jar, spring-context-5.2.7.RELEASE.jar, spring-core-5.2.7.RELEASE.jar, spring-expression-5.2.7.RELEASE.jar, spring-jcl-5.2.7.RELEASE.jar, zookeeper-3.5.4-beta.jar define 1 overlapping resource: 
+[WARNING]   - META-INF/MANIFEST.MF
+[WARNING] spring-aop-5.2.7.RELEASE.jar, spring-beans-5.2.7.RELEASE.jar, spring-context-5.2.7.RELEASE.jar, spring-core-5.2.7.RELEASE.jar, spring-expression-5.2.7.RELEASE.jar, spring-jcl-5.2.7.RELEASE.jar define 2 overlapping resources: 
+[WARNING]   - META-INF/license.txt
+[WARNING]   - META-INF/notice.txt
+[WARNING] maven-shade-plugin has detected that some files are
+[WARNING] present in two or more JARs. When this happens, only one
+[WARNING] single version of the file is copied to the uber jar.
+[WARNING] Usually this is not harmful and you can skip these warnings,
+[WARNING] otherwise try to manually exclude artifacts based on
+[WARNING] mvn dependency:tree -Ddetail=true and the above output.
+[WARNING] See https://maven.apache.org/plugins/maven-shade-plugin/
+[INFO] Replacing /workspace/isolate-rpc/rpc-benchmark-client/target/benchmarks.jar with /workspace/isolate-rpc/rpc-benchmark-client/target/rpc-benchmark-client-1.0-SNAPSHOT-shaded.jar
+[INFO] 
+[INFO] --- install:3.1.2:install (default-install) @ rpc-benchmark-client ---
+[INFO] Installing /workspace/isolate-rpc/rpc-benchmark-client/pom.xml to /workspace/.m2/repository/github/javaguide/rpc-benchmark-client/1.0-SNAPSHOT/rpc-benchmark-client-1.0-SNAPSHOT.pom
+[INFO] Installing /workspace/isolate-rpc/rpc-benchmark-client/target/rpc-benchmark-client-1.0-SNAPSHOT.jar to /workspace/.m2/repository/github/javaguide/rpc-benchmark-client/1.0-SNAPSHOT/rpc-benchmark-client-1.0-SNAPSHOT.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for guide-rpc-framework 1.0-SNAPSHOT:
+[INFO] 
+[INFO] guide-rpc-framework ................................ SUCCESS [  0.266 s]
+[INFO] rpc-framework-common ............................... SUCCESS [  0.703 s]
+[INFO] rpc-framework-simple ............................... SUCCESS [  1.346 s]
+[INFO] hello-service-api .................................. SUCCESS [  0.020 s]
+[INFO] example-client ..................................... SUCCESS [  0.033 s]
+[INFO] example-server ..................................... SUCCESS [  0.030 s]
+[INFO] rpc-benchmark-api .................................. SUCCESS [  0.017 s]
+[INFO] rpc-benchmark-server ............................... SUCCESS [  0.025 s]
+[INFO] rpc-benchmark-client ............................... SUCCESS [  2.123 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.708 s
+[INFO] Finished at: 2026-10-10T08:24:16Z
+[INFO] ------------------------------------------------------------------------

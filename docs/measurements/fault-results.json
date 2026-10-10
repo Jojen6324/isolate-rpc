@@ -1,0 +1,377 @@
+{
+  "runs": [
+    {
+      "race_outcomes": {
+        "requests": 1000,
+        "success": 896,
+        "timeout": 90,
+        "cancelled": 14,
+        "pending": 0,
+        "timers": 0
+      },
+      "run": 1,
+      "command_exit_code": 0,
+      "response_timeout_cancel_race_requests": 1000,
+      "tests": [
+        {
+          "class": "github.javaguide.benchmark.adapter.GuideRpcAdapterTest",
+          "assertion": "actualConnectionsContentChecksAndCancellationPropagateToTransport",
+          "seconds": 0.233,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServerResponseTest",
+          "assertion": "nullAndBusinessFailureKeepRequestIdAndConnection",
+          "seconds": 0.081,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServerResponseTest",
+          "assertion": "twoChannelsUseIndependentHandlers",
+          "seconds": 0.002,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "sameInterfaceDifferentGroupAndVersionRouteToSeparatePools",
+          "seconds": 0.117,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "timeoutLateResponseDoesNotBreakConnection",
+          "seconds": 0.109,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "closeAConnectionDoesNotFailBAndAllowsReconnect",
+          "seconds": 0.033,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "serviceIdentityDoesNotUseAmbiguousConcatenationAndShutdownRejects",
+          "seconds": 0.107,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "twoIndependentClientsNullErrorAndFollowingSuccessOverRealTcp",
+          "seconds": 0.018,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "slowOverloadRejectsAndFastServiceIsolatedUsingSameDispatch",
+          "seconds": 0.025,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.DefaultDiscoveryShutdownTest",
+          "assertion": "unavailableRealRegistryHonorsTimeoutAndClientShutdown",
+          "seconds": 1.53,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "closeTerminatesInflightRejectsNewAndStopsOwnedThreads",
+          "seconds": 0.004,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "connectionRefusalTerminates",
+          "seconds": 0.004,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "deadlineIncludesBlockedDiscoveryAndDoesNotSendAfterExpiry",
+          "seconds": 0.052,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "writeFailureCleansPending",
+          "seconds": 0.002,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "responseTimeoutCancelRaceHasOneWinnerAndNoResources",
+          "seconds": 0.065,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "terminalBeforeTimerOrChannelAttachmentCannotResurrectRequest",
+          "seconds": 0.005,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "connectionAFailureLeavesBIntactAndLateResponseIsIgnored",
+          "seconds": 0.001,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "timeoutAndCancellationCleanPendingAndTimers",
+          "seconds": 0.033,
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "race_outcomes": {
+        "requests": 1000,
+        "success": 994,
+        "timeout": 4,
+        "cancelled": 2,
+        "pending": 0,
+        "timers": 0
+      },
+      "run": 2,
+      "command_exit_code": 0,
+      "response_timeout_cancel_race_requests": 1000,
+      "tests": [
+        {
+          "class": "github.javaguide.benchmark.adapter.GuideRpcAdapterTest",
+          "assertion": "actualConnectionsContentChecksAndCancellationPropagateToTransport",
+          "seconds": 0.205,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServerResponseTest",
+          "assertion": "nullAndBusinessFailureKeepRequestIdAndConnection",
+          "seconds": 0.085,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServerResponseTest",
+          "assertion": "twoChannelsUseIndependentHandlers",
+          "seconds": 0.002,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "sameInterfaceDifferentGroupAndVersionRouteToSeparatePools",
+          "seconds": 0.127,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "timeoutLateResponseDoesNotBreakConnection",
+          "seconds": 0.111,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "closeAConnectionDoesNotFailBAndAllowsReconnect",
+          "seconds": 0.029,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "serviceIdentityDoesNotUseAmbiguousConcatenationAndShutdownRejects",
+          "seconds": 0.104,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "twoIndependentClientsNullErrorAndFollowingSuccessOverRealTcp",
+          "seconds": 0.022,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "slowOverloadRejectsAndFastServiceIsolatedUsingSameDispatch",
+          "seconds": 0.024,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.DefaultDiscoveryShutdownTest",
+          "assertion": "unavailableRealRegistryHonorsTimeoutAndClientShutdown",
+          "seconds": 1.491,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "closeTerminatesInflightRejectsNewAndStopsOwnedThreads",
+          "seconds": 0.004,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "connectionRefusalTerminates",
+          "seconds": 0.005,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "deadlineIncludesBlockedDiscoveryAndDoesNotSendAfterExpiry",
+          "seconds": 0.052,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "writeFailureCleansPending",
+          "seconds": 0.003,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "responseTimeoutCancelRaceHasOneWinnerAndNoResources",
+          "seconds": 0.052,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "terminalBeforeTimerOrChannelAttachmentCannotResurrectRequest",
+          "seconds": 0.001,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "connectionAFailureLeavesBIntactAndLateResponseIsIgnored",
+          "seconds": 0.001,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "timeoutAndCancellationCleanPendingAndTimers",
+          "seconds": 0.032,
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    },
+    {
+      "race_outcomes": {
+        "requests": 1000,
+        "success": 695,
+        "timeout": 228,
+        "cancelled": 77,
+        "pending": 0,
+        "timers": 0
+      },
+      "run": 3,
+      "command_exit_code": 0,
+      "response_timeout_cancel_race_requests": 1000,
+      "tests": [
+        {
+          "class": "github.javaguide.benchmark.adapter.GuideRpcAdapterTest",
+          "assertion": "actualConnectionsContentChecksAndCancellationPropagateToTransport",
+          "seconds": 0.227,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServerResponseTest",
+          "assertion": "nullAndBusinessFailureKeepRequestIdAndConnection",
+          "seconds": 0.077,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServerResponseTest",
+          "assertion": "twoChannelsUseIndependentHandlers",
+          "seconds": 0.005,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "sameInterfaceDifferentGroupAndVersionRouteToSeparatePools",
+          "seconds": 0.129,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "timeoutLateResponseDoesNotBreakConnection",
+          "seconds": 0.109,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "closeAConnectionDoesNotFailBAndAllowsReconnect",
+          "seconds": 0.028,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "serviceIdentityDoesNotUseAmbiguousConcatenationAndShutdownRejects",
+          "seconds": 0.105,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "twoIndependentClientsNullErrorAndFollowingSuccessOverRealTcp",
+          "seconds": 0.019,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.ServiceIsolationTest",
+          "assertion": "slowOverloadRejectsAndFastServiceIsolatedUsingSameDispatch",
+          "seconds": 0.032,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.DefaultDiscoveryShutdownTest",
+          "assertion": "unavailableRealRegistryHonorsTimeoutAndClientShutdown",
+          "seconds": 1.502,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "closeTerminatesInflightRejectsNewAndStopsOwnedThreads",
+          "seconds": 0.003,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "connectionRefusalTerminates",
+          "seconds": 0.005,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "deadlineIncludesBlockedDiscoveryAndDoesNotSendAfterExpiry",
+          "seconds": 0.052,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "writeFailureCleansPending",
+          "seconds": 0.003,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "responseTimeoutCancelRaceHasOneWinnerAndNoResources",
+          "seconds": 0.074,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "terminalBeforeTimerOrChannelAttachmentCannotResurrectRequest",
+          "seconds": 0.001,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "connectionAFailureLeavesBIntactAndLateResponseIsIgnored",
+          "seconds": 0.0,
+          "status": "passed"
+        },
+        {
+          "class": "github.javaguide.remoting.transport.netty.client.RequestLifecycleTest",
+          "assertion": "timeoutAndCancellationCleanPendingAndTimers",
+          "seconds": 0.033,
+          "status": "passed"
+        }
+      ],
+      "status": "passed"
+    }
+  ],
+  "scope": "JUnit deterministic fault injection plus real local TCP; each race run covers 1000 requests. Zero pending is not a claim of zero heap leaks."
+}

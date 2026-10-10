@@ -1,0 +1,17 @@
+[rpc-discovery-1] ERROR github.javaguide.utils.PropertiesFileUtil - occur exception when read properties file [rpc.properties]
+TERMINATED RpcCallException pending=0
+java.lang.InterruptedException
+	at java.lang.Object.wait(Native Method)
+	at org.apache.curator.framework.state.ConnectionStateManager.blockUntilConnected(ConnectionStateManager.java:234)
+	at org.apache.curator.framework.imps.CuratorFrameworkImpl.blockUntilConnected(CuratorFrameworkImpl.java:290)
+	at github.javaguide.registry.zk.util.CuratorUtils.getZkClient(CuratorUtils.java:119)
+	at github.javaguide.registry.zk.ZkServiceDiscoveryImpl.lookupService(ZkServiceDiscoveryImpl.java:35)
+	at github.javaguide.remoting.transport.netty.client.NettyRpcClient.lambda$sendRpcRequestAsync$3(NettyRpcClient.java:65)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)
+Exception in thread "main" java.lang.IllegalStateException: Discovery tasks did not stop
+	at github.javaguide.remoting.transport.netty.client.NettyRpcClient.close(NettyRpcClient.java:150)
+	at RegistryShutdownProbe.main(RegistryShutdownProbe.java:12)

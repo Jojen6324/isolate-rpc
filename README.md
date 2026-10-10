@@ -62,4 +62,4 @@ python3 scripts/summarize.py results --output results/summary
 
 每次保留 manifest.json、JMH 原生 JSON 或逐请求 scenario.csv、服务端 metrics.csv、client-metrics.csv、日志、client-statistics.json。故障报告独立保存当前运行 JUnit XML、断言、状态及实际竞态分布。汇总区分成功、过载、超时、传输/业务失败、未发出；分位数由原始成功样本计算，不能平均每秒 P95。生成器无效的运行不纳入 A/B 结论。
 
-结果与四条简历/面试说明将在 `docs/MEASUREMENTS.md` 和 `docs/RESUME_NOTES.md` 记录；短采样数字只作为此机器上的初步证据，不替代正式容量评估。
+实测结果见 [MEASUREMENTS](docs/MEASUREMENTS.md)，四条简历与面试说明见 [RESUME_NOTES](docs/RESUME_NOTES.md)；短采样数字只作为此机器上的初步证据，不替代正式容量评估。

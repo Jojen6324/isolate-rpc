@@ -6,6 +6,19 @@
 
 ## 线程模型
 
+```mermaid
+flowchart LR
+    A[同步代理或异步入口] --> B[实例级 pending 与 deadline]
+    B --> C[有界发现准备池]
+    C --> D[Netty 客户端 I/O]
+    D --> E[服务端 I/O: 解码 心跳 分发]
+    E --> F[SHARED 或 ISOLATED 有界业务池]
+    F --> G[成功 业务失败 过载响应]
+    G --> D
+    D --> H[先清理资源 再完成 Future]
+```
+
+
 Netty boss=1、worker=2；客户端每个独立连接实例有 2 个 I/O 线程。Handler 在 I/O 线程解码、处理心跳和提交任务，不执行用户业务。业务在 ServiceExecutorManager 创建的固定 ThreadPoolExecutor 中执行。SHARED/ISOLATED 共享同一 Handler 分发逻辑；唯一改变是池资源映射。
 
 每个客户端有有界的 2 线程/256 队列准备池，用于服务发现；超时从调用入口开始，涵盖发现和连接。建连采用异步 ChannelFuture，不阻塞 I/O 线程。连接缓存由每个客户端独立拥有，通过 closeFuture 清除失效条目；多个客户端能真实建立多个连接。
@@ -39,3 +52,5 @@ ScenarioRunner 为快慢请求独立规划到达时间，限制总在途量，�
 ## 故障证据范围
 
 RequestLifecycleTest、ServerResponseTest、ServiceIsolationTest 覆盖连接拒绝（非网络黑洞）、写失败、发现超时、取消、断连 A/B、迟到响应、null/业务异常、双客户端、相同接口 group/version、队列过载、强制关闭及 1000 次响应/超时/取消竞态。scripts/fault-report.py 重复运行并保留当次 XML、命令状态、实际结果分布。pending=0 不等于堆内存没有任何泄漏。
+
+注册中心首次连接现在由同步初始化保护，连接成功前不进入共享缓存；被中断或超时就关闭候选连接并传播错误。适配器派生 Future 的取消显式向底层传播。最终构建与较早评测数据不混合统计，详情见 MEASUREMENTS.md。
