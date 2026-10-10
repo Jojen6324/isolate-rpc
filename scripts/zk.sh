@@ -33,7 +33,8 @@ if action=='stop' and not owned:print('Managed ZooKeeper is not running');raise 
 if not (action=='start' and owned):
  subprocess.run([str(root/'apache-zookeeper-3.5.8-bin/bin/zkServer.sh'),action,str(config)],check=True)
 if action=='start':
- for _ in range(100):
+ deadline=time.monotonic()+10
+ while time.monotonic()<deadline:
   if ready():print('ZooKeeper ready');break
   time.sleep(.1)
  else:raise SystemExit('ZooKeeper functional readiness failed')
